@@ -3,16 +3,17 @@ import "../components/components.js";
 import {  getComponents, getContentRenderer, getTabRenderer } from "../components/common/registry.js";
 import { TileCollection } from "../layout/common/tileCollection.js";
 import { Masonry } from "../layout/masonry/masonry.js";
+import { IAppBase } from "../../common/appbase.js";
 
 
 
-export interface Studio extends DisposableStack {
-
-}
-
-class _StudioImpl extends DisposableStack implements Studio {
-    constructor(_appElement: HTMLElement) {
+export class Studio extends DisposableStack {
+    constructor(
+        @IAppBase()
+        appBase: IAppBase
+    ) {
         super();
+        const _appElement = appBase.element;
 
         this._layout = new Masonry(_appElement, {
             createContentRenderer(_options) {
@@ -39,9 +40,3 @@ class _StudioImpl extends DisposableStack implements Studio {
     private _tiles  = new TileCollection;
     private _layout: Masonry;
 }
-
-interface _StudioCtor {
-    new(_appElement: HTMLElement): Studio;
-}
-
-export const Studio: _StudioCtor = _StudioImpl;
