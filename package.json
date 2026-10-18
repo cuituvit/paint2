@@ -1,0 +1,50 @@
+{
+  "name": "paint2",
+  "productName": "paint2",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".x/main.js",
+  "private": true,
+  "type": "module",
+  "types": "src/dts/paint2.d.ts",
+  "exports": {
+    ".": "./.x/app.js"
+  },
+  "scripts": {
+    "start": "tsx esbuild.mts && electron-forge start",
+    "package": "tsx esbuild.mts --prod electron-forge package",
+    "make": "tsx esbuild.mts --prod && electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "sin",
+    "email": "ruins.sk@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-deb": "^7.11.2",
+    "@electron-forge/maker-rpm": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.2",
+    "@electron-forge/plugin-fuses": "^7.11.2",
+    "@electron/fuses": "^1.8.0",
+    "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^26.5.0",
+    "@webgpu/types": "^0.1.72",
+    "cheerio": "^1.2.0",
+    "electron": "44.3.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "gl-matrix": "^3.4.4",
+    "mime-types": "^3.0.2"
+  }
+}

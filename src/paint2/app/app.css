@@ -1,0 +1,40 @@
+
+
+
+@font-face {
+    font-family: "Google Sans";
+    src: url("../../../assets/fonts/GoogleSans.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --background: #121212;
+    --color:      #e5e5e5;
+}
+
+html, body {
+    all: unset;
+    
+    width:  100vw;
+    height: 100vh;
+    
+    background:  var(--background);
+    color:       var(--color);
+    
+    overflow:    hidden;
+    user-select: none;
+    
+    #app {
+        all:         unset;
+        font-family: "Google Sans";
+      
+        width:  100%;
+        height: 100%;
+      
+        >*{
+            position: absolute;
+        }
+    }
+}

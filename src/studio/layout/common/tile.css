@@ -1,0 +1,27 @@
+
+
+
+:root {
+    --tab-background:      #444;
+    --tab-background-light:#555;
+    --tab-background-dark: #333;
+    --content-background:  #252525;
+}
+
+.tile {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    
+    > .tab {
+        background: var(--tab-background);
+        height: 16px;
+
+        box-shadow: 
+            inset -2px -2px 4px var(--tab-background-dark),
+            inset  2px  2px 4px var(--tab-background-light);
+    }
+    
+    > .content {
+        background: var(--content-background);
+    }
+}

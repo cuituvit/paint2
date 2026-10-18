@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "es2025",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "rootDir": ".",
+        "outDir": ".x",
+        "noEmit": false,
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "noUncheckedSideEffectImports": false,
+        "types": [
+            "@webgpu/types"
+        ],
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+    ],
+    "exclude": [
+        "node_modules",
+        ".x",
+    ]
+}
