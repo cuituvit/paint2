@@ -1,5 +1,5 @@
-import { IContentRenderer, ITabRenderer } from "../../layout/common/tile.js";
-import { AddTileOptions } from "../../layout/masonry/masonry.js";
+import { IContentRenderer, ITabRenderer } from "../../../studio1/common/tile/tile.js";
+import { AddTileOptions } from "../../../studio1/common/masonry/masonry.js";
 
 
 

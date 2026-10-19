@@ -3,13 +3,11 @@
 
 export type InterfaceId = string;
 
-export interface IUnknown {
+export interface IUnknown extends Disposable {
     queryInterface<_Ty>(_iid: InterfaceId): _Ty | undefined;
-    addRef():  number;
-    release(): number;
 }
 
-export class Component implements IUnknown {
+export abstract class Component implements IUnknown {
     protected constructor() {
         this._interfaces.set("unknown", this);
     }
@@ -29,33 +27,10 @@ export class Component implements IUnknown {
             return undefined;
         }
 
-        this.addRef();
         return _inst as _Ty;
     }
 
-    addRef() {
-        if (this._refCount < 1) {
-            throw Error("Attempting to reference a released Component Object");
-        }
-
-        return ++this._refCount;
-    }
-
-    release() {
-        if (this._refCount < 1) {
-            throw new Error("Reference count underflow");
-        }
-
-        const _count = --this._refCount;
-        if (_count === 0) {
-            this.onFinalRelease?.();
-            this._interfaces.clear();
-        }
-
-        return _count;
-    }
-
-    protected onFinalRelease?(): void;
+    abstract [Symbol.dispose](): void;
 
     private _refCount            = 1;
     private readonly _interfaces = new Map<InterfaceId, unknown>();
@@ -69,8 +44,9 @@ export interface ComponentId<_Ty> {
 type _ComponentIdInterfaceId<_Ty, _IId extends InterfaceId> = [ComponentId<_Ty>, _IId];
 
 const _componentDependencies = new WeakMap<Function, Map<number, _ComponentIdInterfaceId<any, any>>>();
+const _singletonComponents   = new Map<ComponentId<any>, new(..._args: any[])=>any>();
+const _transientComponents   = new Map<ComponentId<any>, new(..._args: any[])=>any>();
 const _componentInstances    = new Map<ComponentId<any>, IUnknown>();
-const _componentConstructors = new Map<ComponentId<any>, new(..._args: any[])=>any>();
 
 export function createDecorator<_Ty>(_name: string) {
     const _id = function<_IId extends InterfaceId>(_iId: _IId = "unknown" as _IId) {
@@ -88,10 +64,17 @@ export function createDecorator<_Ty>(_name: string) {
 }
 
 export function registerSingleton<_Ty, _CompTy extends IUnknown>(_id: ComponentId<_Ty>, _ctor: new(..._args: any[])=>_CompTy) {
-    if (_componentConstructors.has(_id)) {
+    if (_singletonComponents.has(_id)) {
         return;
     }
-    _componentConstructors.set(_id, _ctor);
+    _singletonComponents.set(_id, _ctor);
+}
+
+export function registerTransient<_Ty, _CompTy extends IUnknown>(_id: ComponentId<_Ty>, _ctor: new(..._args: any[])=>_CompTy) {
+    if (_transientComponents.has(_id)) {
+        return;
+    }
+    _transientComponents.set(_id, _ctor);
 }
 
 export function instantiate<_Ty>(_ctor: new(..._args: any[])=>_Ty): _Ty {
@@ -100,19 +83,34 @@ export function instantiate<_Ty>(_ctor: new(..._args: any[])=>_Ty): _Ty {
 
     if (_deps) {
         for (const _v of _deps) {
-            const _compId = _v[1][0];
+            const _argIndex    = _v[0];
+            const _compId      = _v[1][0];
+            const _interfaceId = _v[1][1];
 
             let _depInst = _componentInstances.get(_compId);
             if (!_depInst) {
-                const _ctor = _componentConstructors.get(_compId);
+                let _ctor      = _transientComponents.get(_compId);
+                let _transient = true;
+
                 if (!_ctor) {
+                    _ctor      = _singletonComponents.get(_compId);
+                    _transient = false;
+                }
+
+                if (!_ctor) {
+                    if (_DEV) {
+                        console.warn(`Component dependency ${_compId} missing`);
+                    }
                     continue;
                 }
 
                 _depInst = instantiate(_ctor);
+                if (!_transient) {
+                    _componentInstances.set(_compId, _depInst!);
+                }
             }
 
-            _args[_v[0]] = _depInst!.queryInterface(_v[1][1]);
+            _args[_argIndex] = _depInst!.queryInterface(_interfaceId);
         }
     }
 

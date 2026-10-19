@@ -41,6 +41,10 @@ export class TileCollection {
         this._listOrdered = [];
     }
 
+    get listPair() {
+        return this._map.entries().toArray();
+    }
+
     get listOrdered() {
         return this._listOrdered;
     }

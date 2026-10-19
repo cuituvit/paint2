@@ -1,4 +1,4 @@
-import { IContentRenderer, RendererInitParameters } from "../../layout/common/tile.js";
+import { IContentRenderer, RendererInitParameters } from "../../../studio1/common/tile/tile.js";
 import { registerComponent, registerContentRenderer } from "../common/registry.js";
 
 

@@ -1,6 +1,6 @@
 import "./default-tab-renderer.css";
 
-import { ITabRenderer, RendererInitParameters, Tile } from "../../layout/common/tile.js";
+import { ITabRenderer, RendererInitParameters, Tile } from "../../../studio1/common/tile/tile.js";
 import { registerTabRenderer } from "./registry.js";
 import { Listener } from "../../../common/disposable.js";
 

@@ -1,8 +1,8 @@
 import "./masonry.css"
 
-import { Parameters } from "../common/utility.js"
-import { IContentRenderer, ITabRenderer, Tile, TileOptions } from "../common/tile.js";
-import { TileCollection } from "../common/tileCollection.js";
+import { Parameters } from "../../../common/parameters.js"
+import { IContentRenderer, ITabRenderer, Tile, TileOptions } from "../tile/tile.js";
+import { TileCollection } from "../tile/tileCollection.js";
 import { ColumnCollection } from "./columnCollection.js";
 import { Column } from "./column.js";
 

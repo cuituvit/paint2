@@ -1,7 +1,7 @@
 import "./tile.css";
 
-import { Freeform, FreeFormOptions } from "../../common/dom/freeform.js";
-import { Parameters } from "./utility.js";
+import { Freeform, FreeFormOptions } from "../dom/freeform.js";
+import { Parameters } from "../../../common/parameters.js";
 
 
 

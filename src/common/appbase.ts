@@ -17,6 +17,10 @@ class AppBase extends Component implements IAppBase {
         document.body.appendChild(this.element);
     }
 
+    [Symbol.dispose](): void {
+        
+    }
+
     readonly element: HTMLElement;
 }
 

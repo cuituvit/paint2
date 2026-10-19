@@ -1,4 +1,4 @@
-import { Tile } from "../common/tile.js";
+import { Tile } from "../tile/tile.js";
 
 
 
