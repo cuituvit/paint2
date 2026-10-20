@@ -19,6 +19,11 @@
         box-shadow: 
             inset -2px -2px 4px var(--tab-background-dark),
             inset  2px  2px 4px var(--tab-background-light);
+
+        display: flex;
+        font-size: 12px;
+        justify-content: center;
+        align-items: center;
     }
     
     > .content {

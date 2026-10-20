@@ -4,7 +4,7 @@
 export type InterfaceId = string;
 
 export interface IUnknown extends Disposable {
-    queryInterface<_Ty>(_iid: InterfaceId): _Ty | undefined;
+    queryInterface<_Ty>(_iid: InterfaceId): _Ty;
 }
 
 export abstract class Component implements IUnknown {
@@ -20,11 +20,11 @@ export abstract class Component implements IUnknown {
         this._interfaces.set(_iid, _instance);
     }
 
-    queryInterface<_Ty>(_iid: InterfaceId): _Ty | undefined {
+    queryInterface<_Ty>(_iid: InterfaceId): _Ty {
         const _inst = this._interfaces.get(_iid);
 
         if (!_inst) {
-            return undefined;
+            throw Error(`Component has no registered interface ${_iid}`);
         }
 
         return _inst as _Ty;
@@ -32,31 +32,27 @@ export abstract class Component implements IUnknown {
 
     abstract [Symbol.dispose](): void;
 
-    private _refCount            = 1;
     private readonly _interfaces = new Map<InterfaceId, unknown>();
+    protected disposed?: true;
 }
 
 export interface ComponentId<_Ty> {
-    <_IId extends InterfaceId>(_iId?: _IId): (_target: Function, _key: string | undefined, _index: number)=>void;
+    (_target: Function, _key: string | undefined, _index: number): void;
     type: _Ty;
 }
 
-type _ComponentIdInterfaceId<_Ty, _IId extends InterfaceId> = [ComponentId<_Ty>, _IId];
-
-const _componentDependencies = new WeakMap<Function, Map<number, _ComponentIdInterfaceId<any, any>>>();
-const _singletonComponents   = new Map<ComponentId<any>, new(..._args: any[])=>any>();
-const _transientComponents   = new Map<ComponentId<any>, new(..._args: any[])=>any>();
+const _componentDependencies = new WeakMap<Function, Map<number, ComponentId<any>>>();
 const _componentInstances    = new Map<ComponentId<any>, IUnknown>();
 
+const _singletonComponents   = new Map<ComponentId<any>, new(..._args: any[])=>IUnknown>();
+
 export function createDecorator<_Ty>(_name: string) {
-    const _id = function<_IId extends InterfaceId>(_iId: _IId = "unknown" as _IId) {
-        return function(_target: Function, _key: string | undefined, _index: number) {
-            if (!_componentDependencies.has(_target)) {
-                _componentDependencies.set(_target, new Map);
-            }
-    
-            _componentDependencies.get(_target)!.set(_index, [_id, _iId]);
+    const _id = function(_target: Function, _key: string | undefined, _index: number) {
+        if (!_componentDependencies.has(_target)) {
+            _componentDependencies.set(_target, new Map);
         }
+
+        _componentDependencies.get(_target)!.set(_index, _id);
     } as ComponentId<_Ty>;
 
     _id.toString = ()=>_name;
@@ -70,32 +66,18 @@ export function registerSingleton<_Ty, _CompTy extends IUnknown>(_id: ComponentI
     _singletonComponents.set(_id, _ctor);
 }
 
-export function registerTransient<_Ty, _CompTy extends IUnknown>(_id: ComponentId<_Ty>, _ctor: new(..._args: any[])=>_CompTy) {
-    if (_transientComponents.has(_id)) {
-        return;
-    }
-    _transientComponents.set(_id, _ctor);
-}
-
-export function instantiate<_Ty>(_ctor: new(..._args: any[])=>_Ty): _Ty {
+function _instantiate<_Ty>(_ctor: new(..._args: any[])=>_Ty): _Ty {
     const _deps = _componentDependencies.get(_ctor);
     const _args = [];
 
     if (_deps) {
         for (const _v of _deps) {
             const _argIndex    = _v[0];
-            const _compId      = _v[1][0];
-            const _interfaceId = _v[1][1];
+            const _compId      = _v[1];
 
             let _depInst = _componentInstances.get(_compId);
             if (!_depInst) {
-                let _ctor      = _transientComponents.get(_compId);
-                let _transient = true;
-
-                if (!_ctor) {
-                    _ctor      = _singletonComponents.get(_compId);
-                    _transient = false;
-                }
+                const _ctor = _singletonComponents.get(_compId);
 
                 if (!_ctor) {
                     if (_DEV) {
@@ -104,15 +86,25 @@ export function instantiate<_Ty>(_ctor: new(..._args: any[])=>_Ty): _Ty {
                     continue;
                 }
 
-                _depInst = instantiate(_ctor);
-                if (!_transient) {
-                    _componentInstances.set(_compId, _depInst!);
-                }
+                _depInst = _instantiate(_ctor);
+                _componentInstances.set(_compId, _depInst!);
             }
 
-            _args[_argIndex] = _depInst!.queryInterface(_interfaceId);
+            _args[_argIndex] = _depInst;
         }
     }
 
     return new _ctor(..._args);
+}
+
+export function instantiateSingletons() {
+    for (const _sc of _singletonComponents) {
+        const _id   = _sc[0];
+        const _ctor = _sc[1];
+
+        if (!_componentInstances.has(_id)) {
+            const _newInst = _instantiate(_ctor);
+            _componentInstances.set(_id, _newInst);
+        }
+    }
 }

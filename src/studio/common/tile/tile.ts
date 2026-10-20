@@ -2,6 +2,7 @@ import "./tile.css";
 
 import { Freeform, FreeFormOptions } from "../dom/freeform.js";
 import { Parameters } from "../../../common/parameters.js";
+import { TabRenderer } from "./tileTabRenderer.js";
 
 
 
@@ -38,8 +39,7 @@ export interface Tile extends Disposable, Freeform {
 
 export type TileOptions = FreeFormOptions & TileInitParameters & {
     className?:      string;
-    ContentRenderer: IContentRenderer;
-    TabRenderer:     ITabRenderer;
+    contentRenderer: IContentRenderer;
 };
 
 export class _TileImpl extends Freeform implements Tile {
@@ -52,8 +52,8 @@ export class _TileImpl extends Freeform implements Tile {
 
         this.element.classList.add("tile");
 
-        this._content = _options.ContentRenderer;
-        this._tab     = _options.TabRenderer;
+        this._content = _options.contentRenderer;
+        this._tab     = new TabRenderer;
 
         this._content.element.classList.add("content");
         this._tab.element.classList.add("tab");

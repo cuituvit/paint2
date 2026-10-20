@@ -15,6 +15,8 @@ class AppBase extends Component implements IAppBase {
         this.element = document.createElement("div");
         this.element.id = "app";
         document.body.appendChild(this.element);
+
+        this.registerInterface("appbase", this as IAppBase);
     }
 
     [Symbol.dispose](): void {

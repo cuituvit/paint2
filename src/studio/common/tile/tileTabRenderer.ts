@@ -1,16 +1,12 @@
-import "./default-tab-renderer.css";
-
-import { ITabRenderer, RendererInitParameters, Tile } from "../../../studio1/common/tile/tile.js";
-import { registerTabRenderer } from "./registry.js";
+import { ITabRenderer, RendererInitParameters, Tile } from "./tile.js";
 import { Listener } from "../../../common/disposable.js";
 
 
 
-class DefaultTabRenderer extends DisposableStack implements ITabRenderer {
+export class TabRenderer extends DisposableStack implements ITabRenderer {
     constructor() {
         super();
         this.element = document.createElement("div");
-        this.element.classList.add("default-tab");
     }
 
     init(parameters: RendererInitParameters): void {
@@ -72,5 +68,3 @@ class DefaultTabRenderer extends DisposableStack implements ITabRenderer {
 
     element: HTMLElement;
 }
-
-registerTabRenderer("default", DefaultTabRenderer);

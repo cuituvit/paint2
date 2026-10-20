@@ -26,15 +26,13 @@ export type CreateRendererOptions = {
 
 export type MasonryOptions = {
     createContentRenderer: (_options: CreateRendererOptions)=>IContentRenderer;
-    createTabRenderer:     (_options: CreateRendererOptions)=>ITabRenderer;
     minColumnWidth?:       number;
     maxColumnWidth?:       number;
 };
 
-export type AddTileOptions = Omit<TileOptions, "ContentRenderer" | "TabRenderer"> & {
+export type AddTileOptions = Omit<TileOptions, "contentRenderer"> & {
     id:                  string;
     contentRendererName: string;
-    tabRendererName:     string;
 };
 
 export class _MasonryImpl extends ColumnCollection implements Masonry {
@@ -81,10 +79,8 @@ export class _MasonryImpl extends ColumnCollection implements Masonry {
 
     private _createTile(_options: AddTileOptions) {
         const _newTile = new Tile({
-            ContentRenderer:
+            contentRenderer:
                 this._options.createContentRenderer({id: _options.id, rendererName: _options.contentRendererName}),
-            TabRenderer:
-                this._options.createTabRenderer({id: _options.id, rendererName: _options.tabRendererName}),
             ..._options,
         });
         return _newTile;
