@@ -1,6 +1,6 @@
-import { Component, createDecorator, IUnknown, registerSingleton } from "../../common/component.js";
-import { IContentRenderer, RendererInitParameters } from "../common/tile/tile.js";
-import { IUiRenderers, IUiTiles, IUi } from "../common/ui.js";
+import { Component, createDecorator, IUnknown, registerSingleton } from "../../../common/component.js";
+import { IContentRenderer, RendererInitParameters } from "../../common/tile/tile.js";
+import { IUiRenderers, IUiTiles, IUi } from "../../common/ui.js";
 
 
 
@@ -17,21 +17,21 @@ class Document extends Component implements IDocument {
     ) {
         super();
 
-        const renderers = ui.queryInterface<IUiRenderers>("renderers");
-        const tiles     = ui.queryInterface<IUiTiles>("tiles");
+        const renderers = this.ui.queryInterface<IUiRenderers>("renderers");
+        const tiles     = this.ui.queryInterface<IUiTiles>("tiles");
 
         renderers.registerContentRenderer("document", ()=>{
             return this.createContentRenderer();
         });
 
-        tiles.add({
+        tiles.addTile({
             id: "document",
             contentRendererName: "document",
             title: "Document",
         });
     }
 
-    [Symbol.dispose]() {
+    dispose() {
 
     }
 

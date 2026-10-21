@@ -1,7 +1,6 @@
 import { IAppBase } from "../../common/appbase.js";
 import { Component, createDecorator, IUnknown, registerSingleton } from "../../common/component.js";
 import { IContentRenderer, Tile } from "./tile/tile.js";
-import { TileCollection } from "./tile/tileCollection.js";
 import { Parameters } from "../../common/parameters.js";
 import { AddTileOptions, CreateRendererOptions, Masonry } from "./masonry/masonry.js";
 
@@ -12,14 +11,10 @@ export interface IUiRenderers {
 }
 
 export interface IUiTiles {
-    add: Masonry["addTile"];
+    addTile: Masonry["addTile"];
 }
 
-export interface IUiTileCollection {
-    readonly tiles: [string, Tile][];
-}
-
-export type IUi  = IUiRenderers & IUiTiles & IUiTileCollection;
+export type IUi  = IUiRenderers & IUiTiles;
 export const IUi = createDecorator<IUi>("layout");
 
 class Ui extends Component implements IUi {
@@ -29,18 +24,17 @@ class Ui extends Component implements IUi {
     ) {
         super();
 
-        const appbaseElement = appbase.queryInterface<IAppBase>("appbase").element;
+        const appbaseElement = this.appbase.queryInterface<IAppBase>("appbase").element;
 
         this._masonry = new Masonry(appbaseElement, {
             createContentRenderer: this._createContentRenderer,
-        }, this._tiles);
+        });
 
         this.registerInterface("renderers", this as IUiRenderers);
         this.registerInterface("tiles", this as IUiTiles);
-        this.registerInterface("tileCollection", this as IUiTileCollection);
     }
 
-    [Symbol.dispose]() {
+    dispose() {
 
     }
 
@@ -60,15 +54,10 @@ class Ui extends Component implements IUi {
         return _renderer();
     }
 
-    add<_Ty extends object = Parameters>(_options: AddTileOptions): Tile | undefined {
+    addTile<_Ty extends object = Parameters>(_options: AddTileOptions): Tile | undefined {
         return this._masonry.addTile(_options);
     }
 
-    get tiles() {
-        return this._tiles.listPair;
-    }
-
-    private _tiles = new TileCollection;
     private _masonry: Masonry;
     private _contentRenderers = new Map<string, ()=>IContentRenderer>();
 }

@@ -5,6 +5,7 @@ export type InterfaceId = string;
 
 export interface IUnknown extends Disposable {
     queryInterface<_Ty>(_iid: InterfaceId): _Ty;
+    dispose(): void;
 }
 
 export abstract class Component implements IUnknown {
@@ -30,7 +31,11 @@ export abstract class Component implements IUnknown {
         return _inst as _Ty;
     }
 
-    abstract [Symbol.dispose](): void;
+    abstract dispose(): void;
+
+    [Symbol.dispose]() {
+        this.dispose();
+    }
 
     private readonly _interfaces = new Map<InterfaceId, unknown>();
     protected disposed?: true;

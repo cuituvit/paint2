@@ -28,7 +28,9 @@ html, body {
     
     #app {
         all:         unset;
+        display:      block;
         font-family: "Google Sans";
+
       
         width:  100%;
         height: 100%;

@@ -13,7 +13,7 @@ class Engine extends Component implements IEngine {
         super();
     }
 
-    [Symbol.dispose](): void {
+    dispose(): void {
         
     }
 }
