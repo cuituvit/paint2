@@ -1,4 +1,4 @@
-import { Component, createDecorator, IUnknown, registerSingleton } from "../../../common/component.js";
+import { Component, createDecorator, IComponent, registerSingleton } from "../../../common/component.js";
 import { IContentRenderer, RendererInitParameters } from "../../common/tile/tile.js";
 import { IUiRenderers, IUiTiles, IUi } from "../../common/ui.js";
 
@@ -13,18 +13,15 @@ export const IDocument = createDecorator<IDocument>("document");
 class Document extends Component implements IDocument {
     constructor(
         @IUi
-        private readonly ui: IUnknown,
+        private readonly ui: IUiRenderers & IUiTiles,
     ) {
         super();
 
-        const renderers = this.ui.queryInterface<IUiRenderers>("renderers");
-        const tiles     = this.ui.queryInterface<IUiTiles>("tiles");
-
-        renderers.registerContentRenderer("document", ()=>{
+        ui.registerContentRenderer("document", ()=>{
             return this.createContentRenderer();
         });
 
-        tiles.addTile({
+        ui.addTile({
             id: "document",
             contentRendererName: "document",
             title: "Document",

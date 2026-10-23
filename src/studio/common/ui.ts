@@ -1,5 +1,5 @@
 import { IAppBase } from "../../common/appbase.js";
-import { Component, createDecorator, IUnknown, registerSingleton } from "../../common/component.js";
+import { Component, createDecorator, IComponent, registerSingleton } from "../../common/component.js";
 import { IContentRenderer, Tile } from "./tile/tile.js";
 import { Parameters } from "../../common/parameters.js";
 import { AddTileOptions, CreateRendererOptions, Masonry } from "./masonry/masonry.js";
@@ -20,18 +20,15 @@ export const IUi = createDecorator<IUi>("layout");
 class Ui extends Component implements IUi {
     constructor(
         @IAppBase
-        private readonly appbase: IUnknown
+        private readonly appbase: IAppBase
     ) {
         super();
 
-        const appbaseElement = this.appbase.queryInterface<IAppBase>("appbase").element;
+        const appbaseElement = this.appbase.element;
 
         this._masonry = new Masonry(appbaseElement, {
             createContentRenderer: this._createContentRenderer,
         });
-
-        this.registerInterface("renderers", this as IUiRenderers);
-        this.registerInterface("tiles", this as IUiTiles);
     }
 
     dispose() {

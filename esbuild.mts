@@ -32,21 +32,6 @@ const _html         = await readFile(_html_path, "utf-8");
 
 const _cheerio_html = cheerio.load(_html);
 
-const _css_entries: string[] = [];
-
-_cheerio_html("link[rel='stylesheet'][href]").each((_, _el)=>{
-    const _href = _cheerio_html(_el).attr("href");
-    if (!_href || _href.startsWith("http")) {
-        return;
-    }
-
-    const _src = path.join(path.dirname(_html_path), _href);
-    const _out = path.basename(_href);
-
-    _cheerio_html(_el).attr("href", _out);
-    _css_entries.push(_src);
-});
-
 _cheerio_html("script[src]").each((_, _el)=>{
     const _href = _cheerio_html(_el).attr("src");
     if (!_href || _href.startsWith("http")) {
@@ -94,20 +79,8 @@ const _renderer = await esbuild.context({
         "electron",
     ],
     loader: {
+        ".wgsl":  "text",
         ".css":   "css",
-        ".ttf":   "file",
-        ".woff":  "file",
-        ".woff2": "file",
-    },
-    assetNames: "assets/[name]-[hash]",
-});
-
-const _styles = await esbuild.context({
-    ..._common,
-    entryPoints: _css_entries,
-    outdir: ".x/",
-    entryNames: "[name]",
-    loader: {
         ".ttf":   "file",
         ".woff":  "file",
         ".woff2": "file",
@@ -123,13 +96,11 @@ if (!_renderer_only) {
 if (_watch) {
     await Promise.all([
         _renderer.watch(),
-        _styles.watch(),
     ]);
 } else {
     await Promise.all([
         _main?.rebuild(),
         _renderer.rebuild(),
-        _styles.rebuild(),
         writeFile(".x/app.html", _processed_html),
     ]);
     process.exit(0);

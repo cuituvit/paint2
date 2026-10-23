@@ -3,4 +3,4 @@ import "./components/document/document.js";
 
 import { instantiateSingletons } from "../common/component.js";
 
-instantiateSingletons();
+await instantiateSingletons();

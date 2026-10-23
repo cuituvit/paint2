@@ -5,12 +5,14 @@
     --tab-background:      #444;
     --tab-background-light:#555;
     --tab-background-dark: #333;
-    --content-background:  #252525;
+    --tile-background:     #252525;
 }
 
 .tile {
     display: grid;
     grid-template-rows: auto 1fr;
+
+    background: var(--tile-background);
     
     > .tab {
         background: var(--tab-background);
@@ -24,9 +26,5 @@
         font-size: 12px;
         justify-content: center;
         align-items: center;
-    }
-    
-    > .content {
-        background: var(--content-background);
     }
 }
