@@ -1,7 +1,7 @@
 import { IAppBase } from "../../common/appbase.js";
 import { Component, createDecorator, IComponent, registerSingleton } from "../../common/component.js";
 import { IContentRenderer, Tile } from "./tile/tile.js";
-import { Parameters } from "../../common/parameters.js";
+import { Parameters } from "../../common/utility.js";
 import { AddTileOptions, CreateRendererOptions, Masonry } from "./masonry/masonry.js";
 
 

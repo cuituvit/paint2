@@ -1,12 +1,18 @@
 import { ITabRenderer, RendererInitParameters, Tile } from "./tile.js";
-import { Listener } from "../../../common/disposable.js";
+import { HTMLElementEventListener } from "../../../common/event.js";
+import { DisposableStack } from "../../../common/disposable.js";
 
 
 
-export class TabRenderer extends DisposableStack implements ITabRenderer {
+export class TabRenderer implements ITabRenderer {
+    private readonly _disposableStack = new DisposableStack;
+
     constructor() {
-        super();
         this.element = document.createElement("div");
+    }
+
+    dispose(): void {
+        this._disposableStack.dispose();
     }
 
     init(parameters: RendererInitParameters): void {
@@ -14,7 +20,7 @@ export class TabRenderer extends DisposableStack implements ITabRenderer {
         this._tile               = parameters.tile;
         this._lastPos            = [this._tile.x, this._tile.y];
 
-        this.use(new Listener(this.element, "pointerdown", (_e: PointerEvent)=>{
+        this._disposableStack.use(new HTMLElementEventListener(this.element, "pointerdown", (_e: PointerEvent)=>{
             if (!this._tile) {
                 return;
             }
@@ -27,7 +33,7 @@ export class TabRenderer extends DisposableStack implements ITabRenderer {
             this._drag    = true;
         }));
 
-        this.use(new Listener(this.element, "pointerup", (_e: PointerEvent)=>{
+        this._disposableStack.use(new HTMLElementEventListener(this.element, "pointerup", (_e: PointerEvent)=>{
             this.element.releasePointerCapture(_e.pointerId);
             this._drag    = false;
 
@@ -45,7 +51,7 @@ export class TabRenderer extends DisposableStack implements ITabRenderer {
             }, 250);
         }));
 
-        this.use(new Listener(this.element, "pointermove", (_e: PointerEvent)=>{
+        this._disposableStack.use(new HTMLElementEventListener(this.element, "pointermove", (_e: PointerEvent)=>{
             if (!this._drag) {
                 return;
             } if (!this._tile) {
@@ -56,7 +62,7 @@ export class TabRenderer extends DisposableStack implements ITabRenderer {
             this._tile.y += _e.movementY;
         }));
 
-        this.adopt(this._relaseTimeout, _v=>{
+        this._disposableStack.adopt(this._relaseTimeout, _v=>{
             clearTimeout(_v);
         });
     }

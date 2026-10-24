@@ -1,10 +1,11 @@
+import { IDisposable } from "./disposable.js";
 import { Latch } from "./latch.js";
 
 
 
 export type InterfaceId = string;
 
-export interface IComponent extends Disposable {
+export interface IComponent extends IDisposable {
     readonly initialized: boolean;
     wait():               Promise<void>;
     dispose():            void;
@@ -18,10 +19,6 @@ export abstract class Component implements IComponent {
     }
 
     abstract dispose(): void;
-
-    [Symbol.dispose]() {
-        this.dispose();
-    }
 
     protected finishInit() {
         this._initLatch?.countDown();
@@ -125,6 +122,7 @@ async function _instantiate<_Ty extends IComponent>(_ctor: new(..._args: any[])=
 
     const _newInst = new _ctor(..._args);
     await _newInst.wait();
+    console.log(`Instantiated ${_ctor.name}`);
     return _newInst;
 }
 

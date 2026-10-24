@@ -1,8 +1,9 @@
 import "./tile.css";
 
 import { Freeform, FreeFormOptions } from "../dom/freeform.js";
-import { Parameters } from "../../../common/parameters.js";
+import { Parameters } from "../../../common/utility.js";
 import { TabRenderer } from "./tileTabRenderer.js";
+import { IDisposable } from "../../../common/disposable.js";
 
 
 
@@ -10,14 +11,14 @@ export type RendererInitParameters = Required<TileInitParameters> & {
     tile: Tile;
 };
 
-export interface IContentRenderer extends Disposable {
+export interface IContentRenderer extends IDisposable {
     init(parameters: RendererInitParameters): void;
     onShow?(): void;
     onHide?(): void;
     readonly element: HTMLElement;
 }
 
-export interface ITabRenderer extends Disposable {
+export interface ITabRenderer extends IDisposable {
     init(parameters: RendererInitParameters): void;
     readonly element: HTMLElement;
 }
@@ -27,7 +28,7 @@ export type TileInitParameters = {
     params?: Parameters;
 }
 
-export interface Tile extends Disposable, Freeform {
+export interface Tile extends IDisposable, Freeform {
     init(params: TileInitParameters): void;
     setTitle(_val?: string):          void;
     readonly content:                 IContentRenderer;
@@ -64,9 +65,9 @@ export class _TileImpl extends Freeform implements Tile {
         });
     }
 
-    [Symbol.dispose]() {
-        this._content[Symbol.dispose]();
-        this._tab[Symbol.dispose]();
+    dispose() {
+        this._content.dispose();
+        this._tab.dispose();
     }
 
     setTitle(_val?: string) {
