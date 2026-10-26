@@ -1,5 +1,5 @@
-import { Component, createDecorator, IComponent, registerTransient } from "../../../common/component.js";
-import { IGpu, IGpuDevice } from "../../../common/gpu.js";
+import { Component, createDecorator, IComponent, registerTransient } from "../../../../common/component.js";
+import { IGpu, IGpuDevice } from "../../../../common/gpu.js";
 
 
 

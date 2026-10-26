@@ -8,18 +8,22 @@ export interface IEnginePixelLayers {
     createPixelLayer(_document: IP2Document, _options: Omit<PixelLayerOptions, "device">): IPixelLayer;
 }
 
-export interface EngineDocumentCreateEvent {
-    document: IP2Document;
+export interface EngineDocumentEvent {
+    document?: IP2Document;
 }
 
 export interface IEngineDocumentRegistryEvents {
-    readonly onDocumentCreate: Event<EngineDocumentCreateEvent>;
+    readonly onDocumentCreate:        Event<EngineDocumentEvent>;
+    readonly onActiveDocumentChanged: Event<EngineDocumentEvent>;
 }
 
 export interface IEngineDocumentRegistry {
     createDocument(_options: P2DocumentOptions): IP2Document;
-    readonly activeDocument: IP2Document | undefined;
-    readonly documents:      IP2Document[];
+    setActiveDocument(_document: IP2Document):   IP2Document;
+    setActiveDocument(_index: number):           IP2Document | undefined;
+    setActiveDocument(_none: undefined):         undefined;
+    readonly activeDocument:                     IP2Document | undefined;
+    readonly documents:                          IP2Document[];
 }
 
 export type IEngineEvents = IEngineDocumentRegistryEvents;

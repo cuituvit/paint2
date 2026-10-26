@@ -1,10 +1,12 @@
-import { ITabRenderer, RendererInitParameters, Tile } from "./tile.js";
-import { HTMLElementEventListener } from "../../../common/event.js";
-import { DisposableStack } from "../../../common/disposable.js";
+import { DisposableStack } from "../../../../common/disposable.js";
+import { HTMLElementEventListener } from "../../../../common/event.js";
+import { RendererInitParameters } from "../../../common/contentRenderer.js";
+import { IMasonryTile } from "../../../common/masonry.js";
+import { _ITabRenderer, _MasonryTile } from "./masonryTile.js";
 
 
 
-export class TabRenderer implements ITabRenderer {
+export class _TileTabRenderer implements _ITabRenderer {
     private readonly _disposableStack = new DisposableStack;
 
     constructor() {
@@ -15,9 +17,10 @@ export class TabRenderer implements ITabRenderer {
         this._disposableStack.dispose();
     }
 
-    init(parameters: RendererInitParameters): void {
+
+    init(parameters: { title: string; } & RendererInitParameters): void {
         this.element.textContent = parameters.title;
-        this._tile               = parameters.tile;
+        this._tile               = parameters.params!.tile as IMasonryTile;
         this._lastPos            = [this._tile.x, this._tile.y];
 
         this._disposableStack.use(new HTMLElementEventListener(this.element, "pointerdown", (_e: PointerEvent)=>{
@@ -70,7 +73,7 @@ export class TabRenderer implements ITabRenderer {
     private _drag    = false;
     private _lastPos = [0, 0] as [number, number];
     private _relaseTimeout: NodeJS.Timeout | undefined;
-    private _tile:          Tile | undefined;
+    private _tile:          IMasonryTile | undefined;
 
     element: HTMLElement;
 }

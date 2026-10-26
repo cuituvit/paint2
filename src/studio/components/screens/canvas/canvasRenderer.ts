@@ -1,8 +1,8 @@
 import shaderSource from "./canvasRenderer.wgsl";
 
-import { Component, createDecorator, registerTransient } from "../../../common/component.js";
-import { IGpu, IGpuDevice } from "../../../common/gpu.js";
-import { IP2Document } from "../../../common/document.js";
+import { Component, createDecorator, registerTransient } from "../../../../common/component.js";
+import { IGpu, IGpuDevice } from "../../../../common/gpu.js";
+import { IP2Document } from "../../../../common/document.js";
 import { mat4, vec2, vec4 } from "gl-matrix";
 
 

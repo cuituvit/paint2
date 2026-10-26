@@ -1,29 +1,15 @@
-import { IAppBase } from "../../../common/appbase.js";
-import { Component, createDecorator, registerSingleton } from "../../../common/component.js";
-import { IEngine, IEngineDocumentRegistry } from "../../../common/components/engine.js";
-import { DisposableStack } from "../../../common/disposable.js";
-import { Emitter, Event, HTMLElementEventListener } from "../../../common/event.js";
+import { Component, registerSingleton } from "../../../../common/component.js";
+import { IEngine, IEngineDocumentRegistry } from "../../../../common/components/engine.js";
+import { DisposableStack } from "../../../../common/disposable.js";
+import { Emitter, HTMLElementEventListener } from "../../../../common/event.js";
 import { ICanvasContext } from "./canvasContext.js";
 import { ICanvasRenderer, ICanvasRendererParameters, ICanvasRendererRender } from "./canvasRenderer.js";
+import { CanvasPointerEvent, ICanvas } from "../../../common/components/canvas.js";
+import { IAppBase } from "../../../common/components/appbase.js";
 
 
 
-export interface CanvasPointerEvent extends PointerEvent {
-    phase: "down" | "move" | "up";
-}
-
-export interface ICanvasEvents {
-    readonly onPointer: Event<CanvasPointerEvent>;
-}
-
-export interface ICanvasElement {
-    readonly element: HTMLCanvasElement;
-}
-
-export type ICanvas  = ICanvasEvents & ICanvasElement;
-export const ICanvas = createDecorator<ICanvas>("canvas");
-
-const _CANVASEMPTYDOCUMENTSIZE = [644, 644] as const;
+const _CANVAS_EMPTY_DOCUMENT_SIZE = [644, 644] as const;
 
 class Canvas extends Component implements ICanvas {
     private readonly _disposableStack = new DisposableStack;
@@ -38,6 +24,7 @@ class Canvas extends Component implements ICanvas {
                 ..._e,
             });
         };
+        
         this._disposableStack.use(new HTMLElementEventListener(this._element, "pointerdown", _baseCb("down")));
         this._disposableStack.use(new HTMLElementEventListener(this._element, "pointermove", _baseCb("move")));
         this._disposableStack.use(new HTMLElementEventListener(this._element, "pointerup",   _baseCb("up")));
@@ -63,7 +50,7 @@ class Canvas extends Component implements ICanvas {
         this._element.id = "the-canvas";
 
         this.context.init(this._element);
-        this.appbase.element.prepend(this._element);
+        this.appbase.pushScreenStack(this._element);
 
         const _resizeObs = new ResizeObserver(_e=>{
             for (const _entry of _e) {
@@ -100,8 +87,8 @@ class Canvas extends Component implements ICanvas {
         if (_activeDocument) {
             this.renderer.renderDocument(this._canvasTextureView, this._canvasSize, _activeDocument);
         } else {
-            this.renderer.center(this._canvasSize, _CANVASEMPTYDOCUMENTSIZE);
-            this.renderer.renderEmpty(this._canvasTextureView, this._canvasSize, _CANVASEMPTYDOCUMENTSIZE);
+            this.renderer.center(this._canvasSize, _CANVAS_EMPTY_DOCUMENT_SIZE);
+            this.renderer.renderEmpty(this._canvasTextureView, this._canvasSize, _CANVAS_EMPTY_DOCUMENT_SIZE);
         }
 
         this.renderer.finishEncoder();

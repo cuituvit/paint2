@@ -22,6 +22,10 @@ export interface Event<_Ty> {
 }
 
 export class Emitter<_Ty> implements IDisposable {
+    constructor(
+        private readonly _options?: { replay?: boolean },
+    ) {}
+
     dispose() {
         if (this._disposed) {
             return;
@@ -34,6 +38,10 @@ export class Emitter<_Ty> implements IDisposable {
     readonly event: Event<_Ty> = (_listener)=>{
         if (this._disposed) {
             throw Error("Disposed Emitter");
+        }
+
+        if (this._options?.replay && this._last) {
+            _listener(this._last);
         }
 
         this._listeners.add(_listener);
@@ -56,11 +64,16 @@ export class Emitter<_Ty> implements IDisposable {
             return;
         }
 
+        if (this._options?.replay) {
+            this._last = _event;
+        }
+
         for (const _l of [...this._listeners]) {
             _l(_event);
         }
     }
 
+    private _last?: _Ty;
     private _listeners = new Set<(_event: _Ty)=>void>();
     private _disposed  = false;
 }

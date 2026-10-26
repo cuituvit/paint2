@@ -56,6 +56,7 @@ const _common = {
 
 const _main = _renderer_only ? undefined : await esbuild.context({
     ..._common,
+    minifyIdentifiers: true,
     entryPoints: [_main_path],
     outfile: ".x/main.js",
     platform: "node",
