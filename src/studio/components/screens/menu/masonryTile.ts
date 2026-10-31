@@ -1,6 +1,6 @@
 import { IDisposable } from "../../../../common/disposable.js";
 import { Parameters } from "../../../../common/utility.js";
-import { IContentRenderer, RendererInitParameters } from "../../../common/contentRenderer.js";
+import { IRenderer, RendererInitParameters } from "../../../common/browser/renderer.js";
 import { Freeform } from "../../../common/dom/freeform.js";
 import { IMasonryTile, MasonryTileInitParameters, MasonryTileOptions } from "../../../common/masonry.js";
 import { _TileTabRenderer } from "./masonryTileTabRenderer.js";
@@ -92,7 +92,7 @@ export class _MasonryTile extends Freeform implements IMasonryTile {
         return this._pinned;
     }
 
-    private _content: IContentRenderer;
+    private _content: IRenderer;
     private _tab:     _ITabRenderer;
     private _title?:  string;
     private _params?: Parameters;

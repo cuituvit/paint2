@@ -1,0 +1,23 @@
+
+
+
+.surface-floating {
+    background:      #fff1;
+    border-radius:   8px;
+    backdrop-filter: blur(4px);
+    outline: 1px solid #fff4;
+
+    box-shadow: 
+        0px 0px 4px #10101077,
+        0px 4px 8px #10101077,
+        0px 8px 16px #10101077;
+
+    &::before {
+        content:  "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        backdrop-filter: blur(12px);
+    }
+}

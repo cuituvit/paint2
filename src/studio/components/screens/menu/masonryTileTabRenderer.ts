@@ -1,6 +1,6 @@
 import { DisposableStack } from "../../../../common/disposable.js";
 import { HTMLElementEventListener } from "../../../../common/event.js";
-import { RendererInitParameters } from "../../../common/contentRenderer.js";
+import { RendererInitParameters } from "../../../common/browser/renderer.js";
 import { IMasonryTile } from "../../../common/masonry.js";
 import { _ITabRenderer, _MasonryTile } from "./masonryTile.js";
 

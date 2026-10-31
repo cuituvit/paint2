@@ -3,14 +3,14 @@ import { IGpu, IGpuDevice } from "../../../../common/gpu.js";
 
 
 
-export interface ICanvasContext {
+export interface _ICanvasContext {
     init(_element: HTMLCanvasElement): void;
     readonly context: GPUCanvasContext;
 }
 
-export const ICanvasContext = createDecorator<ICanvasContext>("canvasContext");
+export const _ICanvasContext = createDecorator<_ICanvasContext>("canvasContext");
 
-class CanvasContext extends Component implements ICanvasContext {
+class _CanvasContext extends Component implements _ICanvasContext {
     constructor(
         @IGpu
         private readonly gpuDevice: IGpuDevice,
@@ -47,4 +47,4 @@ class CanvasContext extends Component implements ICanvasContext {
     private _context!: GPUCanvasContext;
 }
 
-registerTransient(ICanvasContext, CanvasContext);
+registerTransient(_ICanvasContext, _CanvasContext);

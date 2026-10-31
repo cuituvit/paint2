@@ -2,16 +2,17 @@ import { Component, registerSingleton } from "../../../../common/component.js";
 import { IEngine, IEngineDocumentRegistry } from "../../../../common/components/engine.js";
 import { DisposableStack } from "../../../../common/disposable.js";
 import { Emitter, HTMLElementEventListener } from "../../../../common/event.js";
-import { ICanvasContext } from "./canvasContext.js";
-import { ICanvasRenderer, ICanvasRendererParameters, ICanvasRendererRender } from "./canvasRenderer.js";
+import { _ICanvasContext } from "./canvasContext.js";
+import { _ICanvasRenderer, _ICanvasRendererParameters, _ICanvasRendererRender } from "./canvasRenderer.js";
 import { CanvasPointerEvent, ICanvas } from "../../../common/components/canvas.js";
 import { IAppBase } from "../../../common/components/appbase.js";
+import { vec2 } from "gl-matrix";
 
 
 
 const _CANVAS_EMPTY_DOCUMENT_SIZE = [644, 644] as const;
 
-class Canvas extends Component implements ICanvas {
+class _Canvas extends Component implements ICanvas {
     private readonly _disposableStack = new DisposableStack;
 
     private readonly _onPointer = this._disposableStack.use(new Emitter<CanvasPointerEvent>);
@@ -19,10 +20,22 @@ class Canvas extends Component implements ICanvas {
 
     private _registerPointerEvents() {
         const _baseCb = (_phase: CanvasPointerEvent["phase"])=>(_e: PointerEvent)=>{
-            this._onPointer.invokeListeners({
-                phase: _phase,
-                ..._e,
-            });
+            if (_phase === "down") {
+                this._pointer = true;
+                this._element.setPointerCapture(_e.pointerId);
+            }
+
+            if (this._pointer) {
+                this._onPointer.invokeListeners({
+                    phase: _phase,
+                    event: _e,
+                });
+            }
+
+            if (_phase === "up") {
+                this._pointer = false;
+                this._element.releasePointerCapture(_e.pointerId);
+            }
         };
         
         this._disposableStack.use(new HTMLElementEventListener(this._element, "pointerdown", _baseCb("down")));
@@ -37,10 +50,10 @@ class Canvas extends Component implements ICanvas {
     constructor(
         @IAppBase
         private readonly appbase: IAppBase,
-        @ICanvasContext
-        private readonly context: ICanvasContext,
-        @ICanvasRenderer
-        private readonly renderer: ICanvasRendererRender & ICanvasRendererParameters,
+        @_ICanvasContext
+        private readonly context: _ICanvasContext,
+        @_ICanvasRenderer
+        private readonly renderer: _ICanvasRendererRender & _ICanvasRendererParameters,
         @IEngine
         private readonly engine: IEngineDocumentRegistry,
     ) {
@@ -50,7 +63,7 @@ class Canvas extends Component implements ICanvas {
         this._element.id = "the-canvas";
 
         this.context.init(this._element);
-        this.appbase.pushScreenStack(this._element);
+        this.appbase.pushScreen(this._element);
 
         const _resizeObs = new ResizeObserver(_e=>{
             for (const _entry of _e) {
@@ -80,8 +93,30 @@ class Canvas extends Component implements ICanvas {
         this.disposed = true;
     }
 
+    pan(_delta: vec2): void {
+        this.renderer.pan(_delta);
+        this._render();
+    }
+    
+    zoom(_delta: number): void {
+        this.renderer.zoom(_delta);
+        this._render();
+    }
+
+    setZoomTarget(_delta: vec2) {
+        this.renderer.setZoomTarget(_delta);
+    }
+    
+    translatePoint(_coord: vec2) {
+        this.renderer.translatePoint(_coord);
+    }
+
     private _render() {
-        this.renderer.startEncoder();
+        try {
+            this.renderer.startEncoder();
+        } catch (_e) {
+            return;
+        }
 
         const _activeDocument = this.engine.activeDocument;
         if (_activeDocument) {
@@ -107,6 +142,7 @@ class Canvas extends Component implements ICanvas {
     }
 
     private readonly _element: HTMLCanvasElement;
+    private _pointer: boolean = false;
 }
 
-registerSingleton(ICanvas, Canvas);
+registerSingleton(ICanvas, _Canvas);

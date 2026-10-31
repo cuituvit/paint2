@@ -3,18 +3,18 @@ import { IEngine, IEngineDocumentRegistry, IEngineEvents } from "../../../common
 import { DisposableStack } from "../../../common/disposable.js";
 import { IContentRendererRegistry } from "../../common/components/contentRendererRegistry.js";
 import { IMenu, IMenuMasonry } from "../../common/components/menu.js";
-import { IContentRenderer, RendererInitParameters } from "../../common/contentRenderer.js";
+import { IRenderer, RendererInitParameters } from "../../common/browser/renderer.js";
 import { IMasonryTile } from "../../common/masonry.js";
 
 
 
 export interface IDocument {
-    createContentRenderer(): IContentRenderer;
+    createContentRenderer(): IRenderer;
 }
 
 export const IDocument = createDecorator<IDocument>("document");
 
-class Document extends Component implements IDocument {
+class _Document extends Component implements IDocument {
     constructor(
         @IMenu
         private readonly menu: IMenuMasonry,
@@ -41,10 +41,10 @@ class Document extends Component implements IDocument {
     }
 
     createContentRenderer() {
-        return new class implements IContentRenderer {
+        return new class implements IRenderer {
             private readonly _disposableStack = new DisposableStack;
 
-            constructor(private readonly _superthis: Document) {
+            constructor(private readonly _superthis: _Document) {
                 this.element = document.createElement("div");
             }
 
@@ -86,8 +86,8 @@ class Document extends Component implements IDocument {
             }
 
             element: HTMLElement;
-        }(this) as IContentRenderer;
+        }(this) as IRenderer;
     }
 }
 
-registerSingleton(IDocument, Document);
+registerSingleton(IDocument, _Document);

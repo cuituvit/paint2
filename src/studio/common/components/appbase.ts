@@ -3,8 +3,8 @@ import { createDecorator } from "../../../common/component.js";
 
 
 export interface IAppBaseScreenStack {
-    pushScreenStack(_elem: HTMLElement): HTMLElement;
-    popScreenStack(_elem: HTMLElement):  HTMLElement;
+    pushScreen(_elem: HTMLElement): HTMLElement;
+    popScreen(_elem: HTMLElement):  HTMLElement;
     readonly screenStack:                HTMLElement[];
 }
 

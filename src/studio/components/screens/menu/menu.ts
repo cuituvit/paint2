@@ -9,7 +9,7 @@ import { IAppBase, IAppBaseScreenStack } from "../../../common/components/appbas
 
 
 
-export class Menu extends Component implements IMenu {
+class _Menu extends Component implements IMenu {
     constructor(
         @IAppBase
         private readonly appbase: IAppBaseScreenStack,
@@ -21,12 +21,12 @@ export class Menu extends Component implements IMenu {
         this._element    = document.createElement("div");
         this._element.id = "menu";
 
-        this.appbase.pushScreenStack(this._element);
+        // this.appbase.pushScreen(this._element);
     }
 
     dispose() {
         
-    }
+    } 
 
     addTile<_Ty extends object = Parameters>(_options: MasonryAddTileOptions): IMasonryTile {
         const _newTile = this.masonry.addTile(_options);
@@ -49,4 +49,4 @@ export class Menu extends Component implements IMenu {
     private _element: HTMLElement;
 }
 
-registerSingleton(IMenu, Menu);
+registerSingleton(IMenu, _Menu);

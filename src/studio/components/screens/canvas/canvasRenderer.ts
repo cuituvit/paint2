@@ -7,7 +7,7 @@ import { mat4, vec2, vec4 } from "gl-matrix";
 
 
 
-export interface ICanvasRendererParameters {
+export interface _ICanvasRendererParameters {
     pan(_delta: vec2):                                    void;
     setZoomTarget(_coord: vec2):                          void;
     zoom(_delta: number):                                 void;
@@ -17,17 +17,17 @@ export interface ICanvasRendererParameters {
     center(_canvasSize: vec2, _documentSize: vec2):       void;
 }
 
-export interface ICanvasRendererRender {
+export interface _ICanvasRendererRender {
     startEncoder():  void;
     finishEncoder(): void;
     renderEmpty(_canvasTextureView: GPUTextureView, _canvasSize: vec2, _documentSize: vec2):       void;
     renderDocument(_canvasTextureView: GPUTextureView, _canvasSize: vec2, _document: IP2Document): void;
 }
 
-export type ICanvasRenderer  =  ICanvasRendererParameters & ICanvasRendererRender;
-export const ICanvasRenderer = createDecorator<ICanvasRenderer>("canvasRenderer");
+export type _ICanvasRenderer  =  _ICanvasRendererParameters & _ICanvasRendererRender;
+export const _ICanvasRenderer = createDecorator<_ICanvasRenderer>("canvasRenderer");
 
-class CanvasRenderer extends Component implements ICanvasRenderer {
+class _CanvasRenderer extends Component implements _ICanvasRenderer {
     constructor(
         @IGpu
         private readonly gpuDevice: IGpuDevice,
@@ -279,8 +279,8 @@ class CanvasRenderer extends Component implements ICanvasRenderer {
     }
 
     makeClipRect(_canvasSize: vec2, _documentSize: vec2): vec4 {
-        const _clipX = -this._pan[0]     * this._zoom;
-        const _clipY = -this._pan[1]     * this._zoom;
+        const _clipX = -this._pan[0]    * this._zoom;
+        const _clipY = -this._pan[1]    * this._zoom;
         const _clipW = _documentSize[0] * this._zoom;
         const _clipH = _documentSize[1] * this._zoom;
 
@@ -326,4 +326,4 @@ class CanvasRenderer extends Component implements ICanvasRenderer {
     private _sampler: GPUSampler;
 }
 
-registerTransient(ICanvasRenderer, CanvasRenderer);
+registerTransient(_ICanvasRenderer, _CanvasRenderer);

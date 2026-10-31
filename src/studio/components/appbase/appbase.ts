@@ -5,7 +5,7 @@ import { IAppBase } from "../../common/components/appbase.js";
 
 
 
-class AppBase extends Component implements IAppBase {
+class _AppBase extends Component implements IAppBase {
     constructor() {
         super();
 
@@ -23,7 +23,7 @@ class AppBase extends Component implements IAppBase {
         
     }
 
-    pushScreenStack(_elem: HTMLElement): HTMLElement {
+    pushScreen(_elem: HTMLElement): HTMLElement {
         if (this._screenStack.indexOf(_elem) !== -1) {
             return _elem;
         }
@@ -34,7 +34,7 @@ class AppBase extends Component implements IAppBase {
         return _elem;
     }
 
-    popScreenStack(_elem: HTMLElement): HTMLElement {
+    popScreen(_elem: HTMLElement): HTMLElement {
         const _index = this._screenStack.indexOf(_elem);
 
         if (_index === -1) {
@@ -62,4 +62,4 @@ class AppBase extends Component implements IAppBase {
     private _screenStack = [] as HTMLElement[];
 }
 
-registerSingleton(IAppBase, AppBase);
+registerSingleton(IAppBase, _AppBase);

@@ -1,0 +1,43 @@
+
+
+
+#toolbox-container {
+    bottom: 64px;
+    justify-self: center;
+}
+
+#toolbox {
+    box-sizing: border-box;
+    padding: 3px;
+    gap: 3px;
+
+    .tool {
+        background: #fff1;
+        width: 32px;
+        height: 32px;
+
+        border-radius: 4px;
+
+        &:hover {
+            background: #fff3;
+            &:active {
+                background: #fff2;
+            }
+        }
+
+        &.draghover {
+            background: #fff2;
+        }
+
+        &.tool-active {
+            &:hover {
+                background: #fff5;
+                &:active {
+                    background: #fff3;
+                }
+            }
+
+            background: #fff4;
+        }
+    }
+}

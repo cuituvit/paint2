@@ -1,6 +1,6 @@
 import { Component, createDecorator, registerSingleton } from "../../../common/component.js";
 import { IContentRendererRegistry } from "../../common/components/contentRendererRegistry.js";
-import { IContentRenderer } from "../../common/contentRenderer.js";
+import { IRenderer } from "../../common/browser/renderer.js";
 
 
 
@@ -13,7 +13,7 @@ class ContentRendererRegistry extends Component implements IContentRendererRegis
         
     }
 
-    register(_name: string, _fn: () => IContentRenderer) {
+    register(_name: string, _fn: () => IRenderer) {
         if (_DEV)
         if (this._contentRenderers.has(_name)) {
             console.warn(`Replacing ContentRenderer ${_name}`);
@@ -26,7 +26,7 @@ class ContentRendererRegistry extends Component implements IContentRendererRegis
     }
     
     get create() {
-        return (_id: string): IContentRenderer => {
+        return (_id: string): IRenderer => {
             const _renderer = this._contentRenderers.get(_id);
             if (!_renderer) {
                 throw Error(`Content renderer ${_id} missing`);
@@ -35,7 +35,7 @@ class ContentRendererRegistry extends Component implements IContentRendererRegis
         }
     }
 
-    private _contentRenderers = new Map<string, ()=>IContentRenderer>();    
+    private _contentRenderers = new Map<string, ()=>IRenderer>();    
 }
 
 registerSingleton(IContentRendererRegistry, ContentRendererRegistry);
